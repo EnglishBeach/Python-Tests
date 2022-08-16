@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+- phpMyAdmin XML Dump
+- version 5.1.0
+- https://www.phpmyadmin.net
+-
+- Хост: 127.0.0.1:3306
+- Время создания: Июл 29 2022 г., 00:08
+- Версия сервера: 10.5.11-MariaDB
+- Версия PHP: 7.2.34
+-->
+
+<pma_xml_export version="1.0" xmlns:pma="https://www.phpmyadmin.net/some_doc_url/">
+    <!--
+    - Structure schemas
+    -->
+    <pma:structure_schemas>
+        <pma:database name="university" collation="utf8mb4_unicode_ci" charset="utf8mb4">
+            <pma:table name="a_faculty">
+                CREATE TABLE `a_faculty` (
+                  `short_name` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+                  `full_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+                  PRIMARY KEY (`short_name`),
+                  UNIQUE KEY `ak_full_name` (`full_name`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            </pma:table>
+            <pma:table name="a_kafedra">
+                CREATE TABLE `a_kafedra` (
+                  `short_name` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+                  `faculty` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+                  `full_name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+                  PRIMARY KEY (`short_name`),
+                  KEY `fk_kafedra_faculty` (`faculty`),
+                  CONSTRAINT `fk_faculty` FOREIGN KEY (`faculty`) REFERENCES `a_faculty` (`short_name`) ON UPDATE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            </pma:table>
+            <pma:table name="b_discipline">
+                CREATE TABLE `b_discipline` (
+                  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                  `name` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+                  `volume` int(11) DEFAULT NULL,
+                  PRIMARY KEY (`id`)
+                ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            </pma:table>
+            <pma:table name="b_special">
+                CREATE TABLE `b_special` (
+                  `id` int(10) unsigned NOT NULL,
+                  `name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+                  `kafedra` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                  PRIMARY KEY (`id`),
+                  UNIQUE KEY `ak_special` (`name`),
+                  KEY `fk_spceial_kafedra` (`kafedra`),
+                  CONSTRAINT `fk_spceial_kafedra` FOREIGN KEY (`kafedra`) REFERENCES `a_kafedra` (`short_name`) ON DELETE SET NULL ON UPDATE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            </pma:table>
+            <pma:table name="b_student">
+                CREATE TABLE `b_student` (
+                  `id` int(10) unsigned NOT NULL,
+                  `special` int(10) unsigned DEFAULT NULL,
+                  `name` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `fk_student_special` (`special`),
+                  CONSTRAINT `fk_student_special` FOREIGN KEY (`special`) REFERENCES `b_special` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            </pma:table>
+            <pma:table name="c_engeener">
+                CREATE TABLE `c_engeener` (
+                  `id` int(10) unsigned NOT NULL,
+                  `profession` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+                  PRIMARY KEY (`id`),
+                  CONSTRAINT `fk_engeener_worker` FOREIGN KEY (`id`) REFERENCES `c_worker` (`id`) ON UPDATE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            </pma:table>
+            <pma:table name="c_king">
+                CREATE TABLE `c_king` (
+                  `worker_id` int(10) unsigned NOT NULL,
+                  `experience` int(10) unsigned NOT NULL,
+                  PRIMARY KEY (`worker_id`),
+                  CONSTRAINT `fk_king_worker` FOREIGN KEY (`worker_id`) REFERENCES `c_worker` (`id`) ON UPDATE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            </pma:table>
+            <pma:table name="c_teacher">
+                CREATE TABLE `c_teacher` (
+                  `id` int(10) unsigned NOT NULL,
+                  `level` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+                  `stage` int(11) NOT NULL,
+                  PRIMARY KEY (`id`),
+                  CONSTRAINT `fk_teahcer_worker` FOREIGN KEY (`id`) REFERENCES `c_worker` (`id`) ON UPDATE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            </pma:table>
+            <pma:table name="c_worker">
+                CREATE TABLE `c_worker` (
+                  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+                  `name` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
+                  `salary` int(10) unsigned NOT NULL,
+                  `boss_id` int(10) unsigned DEFAULT NULL,
+                  `kafedra` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+                  PRIMARY KEY (`id`),
+                  KEY `fk_worker_kafedra` (`kafedra`),
+                  KEY `ck_worker_boss` (`boss_id`),
+                  CONSTRAINT `ck_worker_boss` FOREIGN KEY (`boss_id`) REFERENCES `c_worker` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+                  CONSTRAINT `fk_worker_kafedra` FOREIGN KEY (`kafedra`) REFERENCES `a_kafedra` (`short_name`) ON DELETE SET NULL ON UPDATE CASCADE
+                ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            </pma:table>
+            <pma:table name="d_exam">
+                CREATE TABLE `d_exam` (
+                  `discipline_id` int(10) unsigned NOT NULL,
+                  `student_id` int(10) unsigned NOT NULL,
+                  `teacher_id` int(10) unsigned NOT NULL,
+                  `date` time NOT NULL,
+                  `auditory` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL,
+                  `mark` tinyint(3) unsigned NOT NULL,
+                  PRIMARY KEY (`discipline_id`,`student_id`,`teacher_id`,`date`),
+                  KEY `fk_exam_student` (`student_id`),
+                  KEY `fk_exam_teacher` (`teacher_id`),
+                  CONSTRAINT `fk_exam_discipline` FOREIGN KEY (`discipline_id`) REFERENCES `b_discipline` (`id`) ON UPDATE CASCADE,
+                  CONSTRAINT `fk_exam_student` FOREIGN KEY (`student_id`) REFERENCES `b_student` (`id`) ON UPDATE CASCADE,
+                  CONSTRAINT `fk_exam_teacher` FOREIGN KEY (`teacher_id`) REFERENCES `c_teacher` (`id`) ON UPDATE CASCADE
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            </pma:table>
+        </pma:database>
+    </pma:structure_schemas>
+
+    <!--
+    - База данных: 'university'
+    -->
+    <database name="university">
+        <!-- Таблица a_faculty -->
+        <table name="a_faculty">
+            <column name="short_name">ИТММ</column>
+            <column name="full_name">Информационные технилигии мат моделирование</column>
+        </table>
+        <table name="a_faculty">
+            <column name="short_name">ФФ</column>
+            <column name="full_name">Филологический факультет</column>
+        </table>
+        <table name="a_faculty">
+            <column name="short_name">ХФ</column>
+            <column name="full_name">Химический фаультет</column>
+        </table>
+        <!-- Таблица a_kafedra -->
+        <table name="a_kafedra">
+            <column name="short_name">Аналитика</column>
+            <column name="faculty">ХФ</column>
+            <column name="full_name">Аналитической химии</column>
+        </table>
+        <table name="a_kafedra">
+            <column name="short_name">Матан</column>
+            <column name="faculty">ИТММ</column>
+            <column name="full_name">Основной математики</column>
+        </table>
+        <table name="a_kafedra">
+            <column name="short_name">Нефть</column>
+            <column name="faculty">ХФ</column>
+            <column name="full_name">Химии нефти</column>
+        </table>
+        <table name="a_kafedra">
+            <column name="short_name">Ограника</column>
+            <column name="faculty">ХФ</column>
+            <column name="full_name">Органической химии</column>
+        </table>
+        <table name="a_kafedra">
+            <column name="short_name">Роботы</column>
+            <column name="faculty">ИТММ</column>
+            <column name="full_name">Робототехники и проектирования</column>
+        </table>
+        <table name="a_kafedra">
+            <column name="short_name">Сказки</column>
+            <column name="faculty">ФФ</column>
+            <column name="full_name">Русской литературы 18 века</column>
+        </table>
+        <table name="a_kafedra">
+            <column name="short_name">Физхимия</column>
+            <column name="faculty">ХФ</column>
+            <column name="full_name">Физической химии</column>
+        </table>
+        <!-- Таблица b_discipline -->
+        <table name="b_discipline">
+            <column name="id">1</column>
+            <column name="name">Физра</column>
+            <column name="volume">1</column>
+        </table>
+        <table name="b_discipline">
+            <column name="id">2</column>
+            <column name="name">Русский</column>
+            <column name="volume">2</column>
+        </table>
+        <table name="b_discipline">
+            <column name="id">3</column>
+            <column name="name">Химия</column>
+            <column name="volume">5</column>
+        </table>
+        <table name="b_discipline">
+            <column name="id">4</column>
+            <column name="name">Матан</column>
+            <column name="volume">10</column>
+        </table>
+        <!-- Таблица b_special -->
+        <!-- Таблица b_student -->
+        <!-- Таблица c_engeener -->
+        <!-- Таблица c_king -->
+        <!-- Таблица c_teacher -->
+        <!-- Таблица c_worker -->
+        <table name="c_worker">
+            <column name="id">1</column>
+            <column name="name">Пахан</column>
+            <column name="salary">20000</column>
+            <column name="boss_id">NULL</column>
+            <column name="kafedra">Физхимия</column>
+        </table>
+        <table name="c_worker">
+            <column name="id">2</column>
+            <column name="name">Роберт</column>
+            <column name="salary">1000</column>
+            <column name="boss_id">1</column>
+            <column name="kafedra">Нефть</column>
+        </table>
+        <!-- Таблица d_exam -->
+    </database>
+</pma_xml_export>
