@@ -1,2 +1,3 @@
 test_env
 floats.bin
+.mypy_cache
