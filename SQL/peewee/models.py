@@ -17,8 +17,13 @@ class Category(BaseModel):
 
     class Meta:
         table_name = 'Categories'
+        indexes = (
+            (('name','code'),True)
+        )
 
-    name = pe.CharField(30, unique=True)
+    # name = pe.CharField(30, unique=True)
+    name = pe.CharField(30,column_name= 'full_name')
+    code = pe.CharField(6,default = None) # not sql, but peewee
     description = pe.CharField(100)
 
 
@@ -26,7 +31,7 @@ class Product(BaseModel):
     class Meta:
         table_name = 'Products'
     name = pe.CharField(25)
-    price = pe.FloatField(default=None)
+    price = pe.FloatField(pe,constraints=[pe.SQL('DEFAULT 0')])
     category = pe.ForeignKeyField(
         Category,
         related_name='fk_category',
@@ -34,7 +39,7 @@ class Product(BaseModel):
         on_delete='cascade',
         on_update='cascade',
     )
-    inserted_at = pe.DateTimeField(default=pe.datetime.datetime.now())
+    inserted_at = pe.DateTimeField(default=pe.datetime.datetime.now)
 
 
 if __name__ == '__main__':
