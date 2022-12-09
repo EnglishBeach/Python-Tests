@@ -23,11 +23,14 @@ class Category(BaseModel):
 
 
 class Product(BaseModel):
+    class Meta:
+        table_name = 'Products'
     name = pe.CharField(25)
     price = pe.FloatField(default=None)
     category = pe.ForeignKeyField(
         Category,
         related_name='fk_category',
+        backref='categories',
         on_delete='cascade',
         on_update='cascade',
     )
