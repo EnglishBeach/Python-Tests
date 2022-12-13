@@ -1,7 +1,7 @@
 import peewee as pe
 
 database = pe.MySQLDatabase(
-    'orm2',
+    'orm',
     user='root',
     password='',
 )
@@ -15,8 +15,8 @@ class BaseModel(pe.Model):
 
 class Category(BaseModel):
 
-    # class Meta:
-    #     table_name = 'Categories'
+    class Meta:
+        table_name = 'Categories'
 
     name = pe.CharField(30, unique=True)
     description = pe.CharField(100)
