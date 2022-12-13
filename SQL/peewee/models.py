@@ -1,10 +1,9 @@
 import peewee as pe
 
-database = pe.MySQLDatabase(
-    'orm_2',
-    user='root',
-    password='',
-)
+database = pe.MySQLDatabase('orm_2',
+                            user='root',
+                            password='',
+                            autoconnect=False)
 
 
 class BaseModel(pe.Model):
@@ -16,20 +15,20 @@ class BaseModel(pe.Model):
 class Category(BaseModel):
 
     class Meta:
-        table_name = 'Categories'
-        indexes = (
-            (('name','code'),True)
-        )
+        # table_name = 'Categories'
+        indexes = ((('name', 'code'), True), )
 
     # name = pe.CharField(30, unique=True)
-    name = pe.CharField(30,column_name= 'full_name')
-    code = pe.CharField(6,default = None) # not sql, but peewee
+    name = pe.CharField(30, column_name='full_name')
+    code = pe.CharField(6)
     description = pe.CharField(100)
 
 
 class Product(BaseModel):
-    class Meta:
-        table_name = 'Products'
+
+    # class Meta:
+    #     table_name = 'Products'
+
     name = pe.CharField(25)
     price = pe.FloatField(constraints=[pe.SQL('DEFAULT 0')])
     category = pe.ForeignKeyField(
@@ -43,5 +42,9 @@ class Product(BaseModel):
 
 
 if __name__ == '__main__':
-    database.drop_tables([Category, Product])
-    database.create_tables([Category, Product])
+    with database:
+        # Category.drop_table(safe=False)
+        # Category.create_table()
+
+        database.drop_tables([Category, Product])
+        database.create_tables([Category, Product])
