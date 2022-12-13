@@ -1,6 +1,6 @@
 import peewee as pe
 
-database = pe.MySQLDatabase('orm_2',
+database_connection = pe.MySQLDatabase('orm_2',
                             user='root',
                             password='',
                             autoconnect=False)
@@ -9,18 +9,12 @@ database = pe.MySQLDatabase('orm_2',
 class BaseModel(pe.Model):
 
     class Meta:
-        database = database
+        database = database_connection
 
 
 class Category(BaseModel):
 
-    class Meta:
-        # table_name = 'Categories'
-        indexes = ((('name', 'code'), True), )
-
-    # name = pe.CharField(30, unique=True)
-    name = pe.CharField(30, column_name='full_name')
-    code = pe.CharField(6)
+    name = pe.CharField(30, column_name='full_name',null=False,unique=True)
     description = pe.CharField(100)
 
 
@@ -42,9 +36,9 @@ class Product(BaseModel):
 
 
 if __name__ == '__main__':
-    with database:
+    with database_connection:
         # Category.drop_table(safe=False)
         # Category.create_table()
 
-        database.drop_tables([Category, Product])
-        database.create_tables([Category, Product])
+        database_connection.drop_tables([Category, Product])
+        database_connection.create_tables([Category, Product])
