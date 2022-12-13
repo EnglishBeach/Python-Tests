@@ -1,7 +1,7 @@
 import peewee as pe
 
 database = pe.MySQLDatabase(
-    'orm',
+    'orm_2',
     user='root',
     password='',
 )
@@ -31,11 +31,11 @@ class Product(BaseModel):
     class Meta:
         table_name = 'Products'
     name = pe.CharField(25)
-    price = pe.FloatField(pe,constraints=[pe.SQL('DEFAULT 0')])
+    price = pe.FloatField(constraints=[pe.SQL('DEFAULT 0')])
     category = pe.ForeignKeyField(
         Category,
         related_name='fk_category',
-        backref='categories',
+        backref='products',
         on_delete='cascade',
         on_update='cascade',
     )
