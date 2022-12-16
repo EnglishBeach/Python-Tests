@@ -115,7 +115,7 @@ def make_beatifull(df: pd.DataFrame):
     df['Current Ver'] = df['Current Ver'].apply(Collection.tr_Android_Ver)
     df['Content Rating'] = df['Content Rating'].apply(
         Collection.tr_Content_Rating)
-
+    df.loc[df['Rating'].isna()]=0
     df = df.rename(
         columns={
             'Unnamed: 0': 'ID like',
@@ -138,3 +138,5 @@ if __name__ == '__main__':
         )
     show(df4,'Well rating')
     show(df5,'Well rating games')
+    print('\n NaNs:')
+    print(df.isna().sum())
