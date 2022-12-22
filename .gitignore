@@ -1,2 +1,3 @@
 test_env
 .mypy_cache
+Pandas/wild_data.csv
