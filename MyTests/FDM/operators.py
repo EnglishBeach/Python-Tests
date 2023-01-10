@@ -16,6 +16,9 @@ def set_ghost(vector, kind=2):
     elif kind == 1:
         vector[0] = -2 * vector[1] + vector[2]
         vector[-1] = 2 * vector[-2] - vector[-3]
+    elif kind == 0:
+        vector[0] = vector[1]
+        vector[-1] = vector[-2]
 
 
 class _Operator:
